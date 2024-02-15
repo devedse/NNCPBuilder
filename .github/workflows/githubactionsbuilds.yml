@@ -39,7 +39,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Download NNCP source
-        run: curl -L https://bellard.org/nncp/nncp-2023-10-21.tar.gz -o nncp.tar.gz
+        run: Invoke-WebRequest -Uri https://bellard.org/nncp/nncp-2023-10-21.tar.gz -OutFile nncp.tar.gz
         shell: powershell
       - name: Extract NNCP source
         run: tar xzf nncp.tar.gz
@@ -70,8 +70,11 @@ jobs:
         run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
       - name: Extract NNCP source
         run: tar xzf nncp.tar.gz
-      - name: Install MinGW-w64
-        run: sudo apt-get update && sudo apt-get install -y mingw-w64
+      - name: Install MinGW-w64 and zlib
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64
+          sudo apt-get install -y mingw-w64-x86-64-dev zlib1g-dev
       - name: Build Windows executable on Linux
         run: |
           make -C nncp-2023-10-21 CC=x86_64-w64-mingw32-gcc
