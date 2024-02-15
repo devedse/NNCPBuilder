@@ -42,8 +42,8 @@ jobs:
         run: Invoke-WebRequest -Uri https://bellard.org/nncp/nncp-2023-10-21.tar.gz -OutFile nncp.tar.gz
         shell: powershell
       - name: Extract NNCP source
-        run: tar xzf nncp.tar.gz
-        shell: bash
+        run: Expand-Archive -Path nncp.tar.gz -DestinationPath .\
+        shell: powershell
       - name: Setup MinGW-w64
         uses: msys2/setup-msys2@v2
         with:
