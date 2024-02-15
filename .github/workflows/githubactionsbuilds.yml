@@ -22,9 +22,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download NNCP source
-        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
+        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar
       - name: Extract NNCP source
-        run: tar xzf nncp.tar.gz
+        run: tar xf nncp.tar
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential zlib1g-dev
       - name: Build
@@ -39,11 +39,11 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Download NNCP source
-        run: Invoke-WebRequest -Uri https://bellard.org/nncp/nncp-2023-10-21.tar.gz -OutFile nncp.tar.gz
+        run: Invoke-WebRequest -Uri https://bellard.org/nncp/nncp-2023-10-21.tar.gz -OutFile nncp.tar
         shell: powershell
       - name: Extract NNCP source
-        run: Expand-Archive -Path nncp.tar.gz -DestinationPath .\
-        shell: powershell
+        run: tar xf nncp.tar
+        shell: bash
       - name: Setup MinGW-w64
         uses: msys2/setup-msys2@v2
         with:
@@ -73,10 +73,10 @@ jobs:
           sudo apt-get install -y mingw-w64-x86_64-zlib
 
       - name: Download NNCP source
-        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
+        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar
 
       - name: Extract NNCP source
-        run: tar xzf nncp.tar.gz
+        run: tar xf nncp.tar
 
       - name: Build Windows executable on Linux
         run: |
