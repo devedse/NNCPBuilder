@@ -83,7 +83,7 @@ jobs:
       - name: Download NNCP source + extract
         run: |
           wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar
-          tar xf nncp.tar
+          tar -xf nncp.tar
           rm nncp.tar
   
       - name: Download NNCP Windows Dependencies and move to source
