@@ -26,18 +26,13 @@ jobs:
       - name: Extract NNCP source
         run: tar xzf nncp.tar.gz
       - name: Install dependencies
-        run: sudo apt-get update && sudo apt-get install -y build-essential autoconf automake libtool
-      - name: Prepare
-        run: ./configure
-        working-directory: ./nncp-2023-10-21
+        run: sudo apt-get update && sudo apt-get install -y build-essential zlib1g-dev
       - name: Build
-        run: make
-        working-directory: ./nncp-2023-10-21
+        run: make -C nncp-2023-10-21
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-linux
-          path: |
-            ./nncp-2023-10-21/src/nncp
+          path: nncp-2023-10-21/nncp
 
   build_windows:
     needs: generate_version_number
@@ -49,64 +44,58 @@ jobs:
       - name: Extract NNCP source
         run: tar xzf nncp.tar.gz
         shell: bash
-      - name: Setup MSYS2
+      - name: Setup MinGW-w64
         uses: msys2/setup-msys2@v2
         with:
           update: true
           install: >-
-            base-devel
-            gcc
-            make
-            autoconf
-            automake
-            libtool
-      - name: Prepare
-        run: ./configure
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-zlib
+          path-type: inherit
+      - name: Build with CONFIG_WIN32
+        run: |
+          echo "CONFIG_WIN32=y" > config.mak
+          make -C nncp-2023-10-21
         shell: msys2 {0}
-        working-directory: ./nncp-2023-10-21
-      - name: Build
-        run: make
-        shell: msys2 {0}
-        working-directory: ./nncp-2023-10-21
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-windows
-          path: |
-            ./nncp-2023-10-21/src/nncp.exe
+          path: nncp-2023-10-21/nncp.exe
 
-  create_release:
-    needs: [build_linux, build_windows]
+  release_github:
+    needs: [
+      generate_version_number,
+      build_windows,
+      build_linux,
+    ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/download-artifact@v4
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
         with:
           path: ./artifacts/
+
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{needs.generate_version_number.outputs.build_number}}
-          release_name: Release ${{needs.generate_version_number.outputs.build_number}}
+          tag_name: 1.0.${{needs.generate_version_number.outputs.build_number}}
+          release_name: Release 1.0.${{needs.generate_version_number.outputs.build_number}}
+          body: |
+            ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
-      - name: Upload Release Asset (Linux)
-        uses: actions/upload-release-asset@v1
+          
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            ./artifacts/nncp-linux
+            ./artifacts/nncp-windows
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/nncp-linux
-          asset_name: nncp-linux
-          asset_content_type: application/octet-stream
-      - name: Upload Release Asset (Windows)
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./artifacts/nncp-windows
-          asset_name: nncp-windows
-          asset_content_type: application/octet-stream
