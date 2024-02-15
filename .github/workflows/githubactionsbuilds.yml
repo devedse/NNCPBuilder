@@ -91,7 +91,7 @@ jobs:
           wget https://bellard.org/nncp/nncp-2023-10-21-win64.zip --no-check-certificate -O nncp-win64.zip
           unzip nncp-win64.zip -d nncp-win64
           mkdir -p /usr/src/app/nncp-2023-10-21/
-          cp nncp-win64/*.dll /usr/src/app/nncp-2023-10-21/
+          cp nncp-win64/*.dll /usr/src/nncp-2023-10-21/
           rm -rf nncp-win64 nncp-win64.zip
   
       - name: Build Windows executable on Linux
