@@ -66,22 +66,28 @@ jobs:
     needs: generate_version_number
     runs-on: ubuntu-latest
     steps:
-      - name: Download NNCP source
-        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
-      - name: Extract NNCP source
-        run: tar xzf nncp.tar.gz
-      - name: Install MinGW-w64 and zlib
+      - name: Setup MinGW-w64 and zlib
         run: |
           sudo apt-get update
           sudo apt-get install -y mingw-w64
-          sudo apt-get install -y mingw-w64-x86-64-dev zlib1g-dev
+          sudo apt-get install -y mingw-w64-x86_64-zlib
+
+      - name: Download NNCP source
+        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
+
+      - name: Extract NNCP source
+        run: tar xzf nncp.tar.gz
+
       - name: Build Windows executable on Linux
         run: |
-          make -C nncp-2023-10-21 CC=x86_64-w64-mingw32-gcc
+          cd nncp-2023-10-21
+          make CC=x86_64-w64-mingw32-gcc LDFLAGS=-static -lz
+
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-linux-to-windows
           path: nncp-2023-10-21/nncp.exe
+
 
   release_github:
     needs: [
