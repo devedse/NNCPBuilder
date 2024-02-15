@@ -24,21 +24,26 @@ jobs:
       - name: Download NNCP source
         run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
       - name: Extract NNCP source
-        run: tar xzf nncp.tar.gz && cd nncp-2023-10-21
+        run: tar xzf nncp.tar.gz
+      - name: Change directory
+        run: cd nncp-2023-10-21 && pwd
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y build-essential autoconf automake libtool
       - name: Prepare
         run: ./configure
+        working-directory: ./nncp-2023-10-21
       - name: Build
         run: make
+        working-directory: ./nncp-2023-10-21
       - name: Test (optional)
         run: make check # If the project has a test suite
+        working-directory: ./nncp-2023-10-21
 
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-linux
           path: |
-            ./src/nncp # Adjust path as necessary
+            ./nncp-2023-10-21/src/nncp # Adjust path as necessary
 
   build_windows:
     needs: generate_version_number
@@ -48,7 +53,10 @@ jobs:
         run: curl -L https://bellard.org/nncp/nncp-2023-10-21.tar.gz -o nncp.tar.gz
         shell: powershell
       - name: Extract NNCP source
-        run: tar xzf nncp.tar.gz && cd nncp-2023-10-21
+        run: tar xzf nncp.tar.gz
+        shell: bash
+      - name: Change directory
+        run: cd nncp-2023-10-21 && pwd
         shell: bash
       - name: Setup MSYS2
         uses: msys2/setup-msys2@v2
@@ -64,17 +72,18 @@ jobs:
       - name: Prepare
         run: ./configure
         shell: msys2 {0}
+        working-directory: ./nncp-2023-10-21
       - name: Build
         run: make
         shell: msys2 {0}
+        working-directory: ./nncp-2023-10-21
       - name: Test (optional)
         run: make check # If the project has a test suite
         shell: msys2 {0}
+        working-directory: ./nncp-2023-10-21
 
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-windows
           path: |
-            ./src/nncp.exe # Adjust path as necessary
-
-  # The create_release job remains unchanged
+            ./nncp-2023-10-21/src/nncp.exe # Adjust path as necessary
