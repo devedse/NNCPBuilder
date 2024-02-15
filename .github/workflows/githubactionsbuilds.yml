@@ -164,8 +164,8 @@ jobs:
         with:
           tag_name: 1.0.${{needs.generate_version_number.outputs.build_number}}
           files: |
-            ./artifacts/nncp-linux-to-linux
-            ./artifacts/nncp-windows-to-windows
-            ./artifacts/nncp-linux-to-windows
+            ./artifacts/nncp-linux-to-linux.tar.gz
+            ./artifacts/nncp-windows-to-windows.tar.gz
+            ./artifacts/nncp-linux-to-windows.tar.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
