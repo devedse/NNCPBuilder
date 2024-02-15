@@ -31,10 +31,10 @@ jobs:
         run: make -C nncp-2023-10-21
       - uses: actions/upload-artifact@v4
         with:
-          name: nncp-linux
+          name: nncp-linux-to-linux
           path: nncp-2023-10-21/nncp
 
-  build_windows:
+  build_windows_on_windows:
     needs: generate_version_number
     runs-on: windows-latest
     steps:
@@ -59,14 +59,33 @@ jobs:
         shell: msys2 {0}
       - uses: actions/upload-artifact@v4
         with:
-          name: nncp-windows
+          name: nncp-windows-to-windows
+          path: nncp-2023-10-21/nncp.exe
+
+  build_windows_on_linux:
+    needs: generate_version_number
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download NNCP source
+        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
+      - name: Extract NNCP source
+        run: tar xzf nncp.tar.gz
+      - name: Install MinGW-w64
+        run: sudo apt-get update && sudo apt-get install -y mingw-w64
+      - name: Build Windows executable on Linux
+        run: |
+          make -C nncp-2023-10-21 CC=x86_64-w64-mingw32-gcc
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nncp-linux-to-windows
           path: nncp-2023-10-21/nncp.exe
 
   release_github:
     needs: [
       generate_version_number,
-      build_windows,
+      build_windows_on_windows,
       build_linux,
+      build_windows_on_linux,
     ]
     runs-on: ubuntu-latest
     permissions:
@@ -82,7 +101,7 @@ jobs:
         id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: 1.0.${{needs.generate_version_number.outputs.build_number}}
           release_name: Release 1.0.${{needs.generate_version_number.outputs.build_number}}
@@ -90,12 +109,13 @@ jobs:
             ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
-          
+
       - name: Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            ./artifacts/nncp-linux
-            ./artifacts/nncp-windows
+            ./artifacts/nncp-linux-to-linux
+            ./artifacts/nncp-windows-to-windows
+            ./artifacts/nncp-linux-to-windows
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
