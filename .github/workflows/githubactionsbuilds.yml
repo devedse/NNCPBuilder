@@ -1,0 +1,80 @@
+name: BuildNNCP
+
+on: push
+
+jobs:
+  generate_version_number:
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    outputs:
+      build_number: ${{ github.ref == 'refs/heads/master' && steps.buildnumber.outputs.build_number || 1 }}
+    steps:
+      - name: Generate build number
+        if: github.ref == 'refs/heads/master'
+        id: buildnumber
+        uses: onyxmueller/build-tag-number@v1
+        with:
+          token: ${{secrets.GITHUB_TOKEN}}
+
+  build_linux:
+    needs: generate_version_number
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download NNCP source
+        run: wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar.gz
+      - name: Extract NNCP source
+        run: tar xzf nncp.tar.gz && cd nncp-2023-10-21
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y build-essential autoconf automake libtool
+      - name: Prepare
+        run: ./configure
+      - name: Build
+        run: make
+      - name: Test (optional)
+        run: make check # If the project has a test suite
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nncp-linux
+          path: |
+            ./src/nncp # Adjust path as necessary
+
+  build_windows:
+    needs: generate_version_number
+    runs-on: windows-latest
+    steps:
+      - name: Download NNCP source
+        run: curl -L https://bellard.org/nncp/nncp-2023-10-21.tar.gz -o nncp.tar.gz
+        shell: powershell
+      - name: Extract NNCP source
+        run: tar xzf nncp.tar.gz && cd nncp-2023-10-21
+        shell: bash
+      - name: Setup MSYS2
+        uses: msys2/setup-msys2@v2
+        with:
+          update: true
+          install: >-
+            base-devel
+            gcc
+            make
+            autoconf
+            automake
+            libtool
+      - name: Prepare
+        run: ./configure
+        shell: msys2 {0}
+      - name: Build
+        run: make
+        shell: msys2 {0}
+      - name: Test (optional)
+        run: make check # If the project has a test suite
+        shell: msys2 {0}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nncp-windows
+          path: |
+            ./src/nncp.exe # Adjust path as necessary
+
+  # The create_release job remains unchanged
