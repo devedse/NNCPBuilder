@@ -4,6 +4,10 @@ FROM ubuntu:latest
 # Avoid prompts from apt
 ENV DEBIAN_FRONTEND=noninteractive
 
+RUN dpkg --add-architecture i386 && \
+	apt-get update && \
+    apt install wine wine32 wine64 libwine libwine:i386 fonts-wine -y
+
 # Install MinGW-w64, wget to download the source, make, gcc, g++, tar, and other build essentials
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -25,7 +29,7 @@ RUN wget http://www.zlib.net/zlib-1.3.1.tar.gz -O zlib.tar.gz && \
     make && \
     make install && \
     cd .. && \
-    rm -rf zlib-1.3.1 zlib.tar.gz
+    rm zlib.tar.gz
 
 WORKDIR /usr/src/app
 

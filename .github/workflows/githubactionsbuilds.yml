@@ -46,10 +46,11 @@ jobs:
         shell: bash
       - name: Download NNCP Windows Dependencies and move to source
         run: |
-          wget https://bellard.org/nncp/nncp-2023-10-21-win64.zip --no-check-certificate -O nncp-win64.zip
-          unzip nncp-win64.zip -d nncp-win64
+          Invoke-WebRequest -Uri https://bellard.org/nncp/nncp-2023-10-21-win64.zip -OutFile nncp-win64.zip
+          Expand-Archive -Path nncp-win64.zip -DestinationPath nncp-win64
           cp nncp-win64/*.dll ./nncp-2023-10-21/
-          rm -rf nncp-win64 nncp-win64.zip
+          Remove-Item -Force nncp-win64.zip
+        shell: powershell    
       - name: Setup MinGW-w64
         uses: msys2/setup-msys2@v2
         with:
@@ -99,7 +100,7 @@ jobs:
           wget https://bellard.org/nncp/nncp-2023-10-21-win64.zip --no-check-certificate -O nncp-win64.zip
           unzip nncp-win64.zip -d nncp-win64
           cp nncp-win64/*.dll ./nncp-2023-10-21/
-          rm -rf nncp-win64 nncp-win64.zip
+          rm -rf nncp-win64.zip
   
       - name: Build Windows executable on Linux
         run: |
