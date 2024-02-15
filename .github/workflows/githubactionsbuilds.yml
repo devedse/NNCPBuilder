@@ -61,6 +61,7 @@ jobs:
           path-type: inherit
       - name: Build with CONFIG_WIN32
         run: |
+          cd nncp-2023-10-21
           make CONFIG_WIN32=y CC=x86_64-w64-mingw32-gcc
         shell: msys2 {0}
       - uses: actions/upload-artifact@v4
