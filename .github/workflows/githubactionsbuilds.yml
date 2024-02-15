@@ -32,7 +32,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-linux-to-linux
-          path: nncp-2023-10-21/nncp
+          path: nncp-2023-10-21/
 
   build_windows_on_windows:
     needs: generate_version_number
@@ -67,7 +67,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: nncp-windows-to-windows
-          path: nncp-2023-10-21/nncp.exe
+          path: nncp-2023-10-21/
 
   build_windows_on_linux:
     needs: generate_version_number
