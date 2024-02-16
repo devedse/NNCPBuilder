@@ -30,9 +30,15 @@ jobs:
       - name: Build
         run: make -C nncp-2023-10-21
 
+      - name: Prepare output directory
+        run: |
+          mkdir -p output
+          cp nncp-2023-10-21/nncp output/
+          cp nncp-2023-10-21/*.so output/
+
       - name: Create Tar File
         run: |
-          tar -czvf nncp-linux-to-linux.tar.gz nncp-2023-10-21/
+          tar -czvf nncp-linux-to-linux.tar.gz output/
     
       - uses: actions/upload-artifact@v4
         with:
@@ -70,13 +76,15 @@ jobs:
           make CONFIG_WIN32=y CC=x86_64-w64-mingw32-gcc
         shell: msys2 {0}
 
-      - name: Run dir
+      - name: Prepare output directory
         run: |
-          dir
+          mkdir -p output
+          cp nncp-2023-10-21/nncp.exe output/
+          cp nncp-2023-10-21/*.dll output/
 
       - name: Create Tar File
         run: |
-          tar -czvf nncp-windows-to-windows.tar.gz nncp-2023-10-21
+          tar -czvf nncp-windows-to-windows.tar.gz output
     
       - uses: actions/upload-artifact@v4
         with:
@@ -122,9 +130,15 @@ jobs:
           cd nncp-2023-10-21
           make CONFIG_WIN32=y CC=x86_64-w64-mingw32-gcc
 
+      - name: Prepare output directory
+        run: |
+          mkdir -p output
+          cp nncp-2023-10-21/nncp.exe output/
+          cp nncp-2023-10-21/*.dll output/
+
       - name: Create Tar File
         run: |
-          tar -czvf nncp-linux-to-windows.tar.gz nncp-2023-10-21/
+          tar -czvf nncp-linux-to-windows.tar.gz output
     
       - uses: actions/upload-artifact@v4
         with:
