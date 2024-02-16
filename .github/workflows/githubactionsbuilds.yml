@@ -70,6 +70,9 @@ jobs:
           make CONFIG_WIN32=y CC=x86_64-w64-mingw32-gcc
         shell: msys2 {0}
 
+      - name: Run dir
+        run: |
+          dir
 
       - name: Create Tar File
         run: |
@@ -118,10 +121,6 @@ jobs:
         run: |
           cd nncp-2023-10-21
           make CONFIG_WIN32=y CC=x86_64-w64-mingw32-gcc
-  
-      - name: Run dir
-        run: |
-          dir
 
       - name: Create Tar File
         run: |
