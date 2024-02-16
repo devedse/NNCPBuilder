@@ -76,7 +76,7 @@ jobs:
 
       - name: Create Tar File
         run: |
-          tar -czvf nncp-2023-10-21.tar.gz nncp-2023-10-21\
+          tar -czvf nncp-2023-10-21.tar.gz nncp-2023-10-21
     
       - uses: actions/upload-artifact@v4
         with:
