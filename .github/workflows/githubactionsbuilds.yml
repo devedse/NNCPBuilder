@@ -119,6 +119,10 @@ jobs:
           cd nncp-2023-10-21
           make CONFIG_WIN32=y CC=x86_64-w64-mingw32-gcc
   
+      - name: Run dir
+        run: |
+          dir
+
       - name: Create Tar File
         run: |
           tar -czvf nncp-2023-10-21.tar.gz nncp-2023-10-21/

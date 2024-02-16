@@ -40,6 +40,7 @@ RUN wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz --no-check-certificate 
 RUN wget https://bellard.org/nncp/nncp-2023-10-21-win64.zip --no-check-certificate -O nncp-win64.zip && \
     unzip nncp-win64.zip -d nncp-win64 && \
     cp nncp-win64/*.dll /usr/src/app/nncp-2023-10-21/ && \
+    rm ./nncp-2023-10-21/zlib1.dll && \
     rm -rf nncp-win64 nncp-win64.zip
 
 WORKDIR /usr/src/app/nncp-2023-10-21
