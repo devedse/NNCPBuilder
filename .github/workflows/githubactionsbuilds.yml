@@ -38,7 +38,7 @@ jobs:
 
       - name: Create Tar File
         run: |
-          tar -czvf nncp-linux-to-linux.tar.gz output/
+          tar -czvf nncp-linux-to-linux.tar.gz -C output/ .
     
       - uses: actions/upload-artifact@v4
         with:
@@ -84,7 +84,7 @@ jobs:
 
       - name: Create Tar File
         run: |
-          tar -czvf nncp-windows-to-windows.tar.gz output
+          tar -czvf nncp-windows-to-windows.tar.gz -C output/ .
     
       - uses: actions/upload-artifact@v4
         with:
@@ -114,9 +114,6 @@ jobs:
           wget https://bellard.org/nncp/nncp-2023-10-21.tar.gz -O nncp.tar
           tar -xf nncp.tar
           rm nncp.tar
-
-      - name: List all files
-        run: find .
   
       - name: Download NNCP Windows Dependencies and move to source
         run: |
@@ -138,7 +135,7 @@ jobs:
 
       - name: Create Tar File
         run: |
-          tar -czvf nncp-linux-to-windows.tar.gz output
+          tar -czvf nncp-linux-to-windows.tar.gz -C output/ .
     
       - uses: actions/upload-artifact@v4
         with:
